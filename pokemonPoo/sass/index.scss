@@ -1,0 +1,18 @@
+@import "./_card_pokemon.scss";
+@import "./details-pokemon";
+
+* {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Outfit;
+  background: linear-gradient(rgb(200, 211, 196),rgb(115, 112, 119)) ;
+}
+
+.wrapper {
+  background: pink;
+  width: 100%;
+}
