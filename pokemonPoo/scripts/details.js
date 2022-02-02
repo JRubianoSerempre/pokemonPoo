@@ -5,7 +5,7 @@ const _domManipulate = new DomManipulate();
 const pokemonId = url.get('pokemonId');
 
 if (!pokemonId || !pokemonId.trim().length) {
-  window.location.href = '/index.html'
+      window.location.href = '/index.html'
 }
 
 function renderPokemonAbilities({name, effect_entries}, domElementFather){
