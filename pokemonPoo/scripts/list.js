@@ -19,7 +19,7 @@ function renderList(list = []) {
     const pokemonInfo = await _httpResponse.get(element.url)
 
 
-    pokemon = {
+    const pokemon = {
       name : pokemonInfo.name,
       img  : pokemonInfo.sprites.front_default,
       id   : pokemonInfo.id,
@@ -48,26 +48,26 @@ function renderList(list = []) {
           card.setAttribute("style",`background-color: ${colors[pokemon.type]};`)
           
           
-    //create image preview for pokemon 
-    const image = document.createElement('img')
-    image.src=pokemonInfo.sprites.front_default
-    //append image to the card
-    card.appendChild(image)
-    //Create <a> link to info
-    const infoLink = document.createElement('a')
-    infoLink.href =`/pages/pokemon.html?pokemonId=${pokemonInfo.id}`
-    // Creating paragraph for id
-    const id = document.createElement('p')
-    id.textContent = `N.${('00'+pokemon.id).slice(-3)}`
-    // Creating paragraph for name
-    const name = document.createElement('p')
-    name.textContent = `${pokemon.name.charAt(0).toUpperCase()+ pokemon.name.slice(1)}`
-    //append id and name to infoLink
-    infoLink.appendChild(id)
-    infoLink.appendChild(name)
+          //create image preview for pokemon 
+          const image = document.createElement('img')
+                image.src=pokemon.img;
+          //append image to the card
+          card.appendChild(image)
+          //Create <a> link to info
+          const infoLink = document.createElement('a')
+          infoLink.href =`/pages/pokemon.html?pokemonId=${pokemon.id}`
+          // Creating paragraph for id
+          const id = document.createElement('p')
+          id.textContent = `N.${('00'+pokemon.id).slice(-3)}`
+          // Creating paragraph for name
+          const name = document.createElement('p')
+          name.textContent = `${pokemon.name.charAt(0).toUpperCase()+ pokemon.name.slice(1)}`
+          //append id and name to infoLink
+          infoLink.appendChild(id)
+          infoLink.appendChild(name)
 
-    //append nameLink to the card
-    card.appendChild(infoLink)
+          //append nameLink to the card
+          card.appendChild(infoLink)
     cardContainer.appendChild(card)
   })
 }

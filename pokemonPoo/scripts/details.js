@@ -11,21 +11,21 @@ if (!pokemonId || !pokemonId.trim().length) {
 function renderPokemonAbilities({name, effect_entries}, domElementFather){
       const tr = document.createElement('tr');
       effect_entries.forEach(item=>{
-      const abilityName = document.createElement('td');
-            abilityName.style.fontWeight = 900
-            abilityName.innerHTML = `${name.toUpperCase()}`; 
-      if(item.language.name == 'en') {
-      const abilityDetail = document.createElement('td');
-            abilityDetail.innerHTML = `${item.effect}`
-            tr.appendChild(abilityName);
-            tr.appendChild(abilityDetail);
-      }
+            const abilityName = document.createElement('td');
+                  abilityName.style.fontWeight = 900
+                  abilityName.innerHTML = `${name.toUpperCase()}`; 
+            if(item.language.name == 'en') {
+            const abilityDetail = document.createElement('td');
+                  abilityDetail.innerHTML = `${item.effect}`
+                  tr.appendChild(abilityName);
+                  tr.appendChild(abilityDetail);
+            }
       })
       domElementFather.appendChild(tr);
 }
 
-function getAbilities(ability, tbody){
-      _pokemonService.getAbilityDetail(ability)
+async function getAbilities(ability, tbody){
+      await _pokemonService.getAbilityDetail(ability)
             .then(data=> renderPokemonAbilities(data,tbody))
             .catch(error => console.error(error))
 }
@@ -47,7 +47,9 @@ function renderPokemon({ id, name, base_experience, types, weight, sprites, heig
             flying    : '#CDCDCD',
             fighting  : '#FF5D5D',
             normal    : '#FFFFFF',
-            fairy     : '#9D5B9B73'
+            fairy     : '#9D5B9B73',
+            steel     : '#9EB7B8',
+            ghost     : '#7B62A3'
       }
 
       const pokemonInfo = document.createElement('div');
@@ -61,12 +63,14 @@ function renderPokemon({ id, name, base_experience, types, weight, sprites, heig
             const title = document.createElement('h1');
                   title.textContent = `N.${('00'+id).slice(-3)}: ${name.charAt(0).toUpperCase()+ name.slice(1)}`;
                   title.classList.add('pokemon__title');
+
             const img = document.createElement('img');
                   img.src = `${sprites.other["official-artwork"].front_default}`;
                   img.setAttribute('style',`
                                           image-rendering: pixelated;
                                           width:300px;
                   `)
+
             const typesContainer = document.createElement('div')
                   typesContainer.classList.add('pokemon__types')
                   types.forEach(id => {
@@ -107,28 +111,38 @@ function renderPokemon({ id, name, base_experience, types, weight, sprites, heig
                         statsTable.classList.add('stats');
 
                         const tbodyStats =  document.createElement('tbody');
+                              const statsValue = stats.map(id =>{
+                                    return id.base_stat
+                              })
+                              let statHigher = statsValue.sort((a, b) => {return b - a;})[0];
                               stats.forEach(id => {
-                              const trStats = document.createElement('tr');
-                                    const tdStatName = document.createElement('td');
-                                          tdStatName.classList.add('stats__name')
-                                          tdStatName.textContent = `${id.stat.name.toUpperCase()}`;
+                                    const trStats = document.createElement('tr');
+                                          let barFillPercentage = 0;
+                                          if(statHigher>100){
+                                                barFillPercentage = id.base_stat*100/statHigher;
+                                          }else{
+                                                barFillPercentage = 1
+                                          }
+                                          const tdStatName = document.createElement('td');
+                                                tdStatName.classList.add('stats__name')
+                                                tdStatName.textContent = `${id.stat.name.toUpperCase()}`;
 
-                                    const tdStatValue = document.createElement('td');
-                                          tdStatValue.classList.add('stats__value')
-                                          const statBar = document.createElement('div');
-                                                statBar.classList.add('stats__bar');
-                                                const statBarFilled = document.createElement('div');
-                                                      statBarFilled.classList.add('stats__bar-filled');
-                                                      statBarFilled.textContent = `${id.base_stat}`;
-                                                      statBarFilled.setAttribute('style',`width: ${id.base_stat >100 ?'100': id.base_stat}%;
-                                                                                          background: ${colors[types[0].type.name]};
-                                                                                          `)
-                                                statBar.appendChild(statBarFilled);
-                                          tdStatValue.appendChild(statBar)
+                                          const tdStatValue = document.createElement('td');
+                                                tdStatValue.classList.add('stats__value')
+                                                const statBar = document.createElement('div');
+                                                      statBar.classList.add('stats__bar');
+                                                      const statBarFilled = document.createElement('div');
+                                                            statBarFilled.classList.add('stats__bar-filled');
+                                                            statBarFilled.textContent = `${id.base_stat}`;
+                                                            statBarFilled.setAttribute('style',`width: ${statHigher>100 ? barFillPercentage: id.base_stat}%;
+                                                                                                background: ${colors[types[0].type.name]};
+                                                                                                `)
+                                                      statBar.appendChild(statBarFilled);
+                                                tdStatValue.appendChild(statBar)
 
-                                    trStats.appendChild(tdStatName);
-                                    trStats.appendChild(tdStatValue);
-                              tbodyStats.appendChild(trStats)
+                                          trStats.appendChild(tdStatName);
+                                          trStats.appendChild(tdStatValue);
+                                    tbodyStats.appendChild(trStats)
                               })
                         statsTable.appendChild(tbodyStats)
 
